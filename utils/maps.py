@@ -1,23 +1,21 @@
 import urllib.parse
 
 
-def gerar_link_google_maps(origem, destinos):
+def gerar_link_google_maps(origem, destinos, retorno=""):
     """
     Gera um link do Google Maps contendo:
 
     - Origem
-    - Waypoints (paradas intermediárias)
-    - Destino final
+    - Waypoints
+    - Destino Final
 
-    Parâmetros:
-        origem (str): Endereço de partida.
-        destinos (list): Lista de endereços.
+    Se existir um endereço de retorno,
+    ele será utilizado como destino final.
 
-    Retorna:
-        str: URL pronta para abrir no Google Maps.
+    Caso contrário,
+    o último destino da lista será o destino final.
     """
 
-    # Remove endereços vazios
     destinos = [
         endereco.strip()
         for endereco in destinos
@@ -30,26 +28,34 @@ def gerar_link_google_maps(origem, destinos):
     if len(destinos) == 0:
         return None
 
+    if retorno.strip():
+
+        destino_final = retorno.strip()
+
+        waypoints_lista = destinos
+
+    else:
+
+        destino_final = destinos[-1]
+
+        waypoints_lista = destinos[:-1]
+
     origem = urllib.parse.quote(origem)
 
-    # Apenas um destino
-    if len(destinos) == 1:
+    destino_final = urllib.parse.quote(destino_final)
 
-        destino = urllib.parse.quote(destinos[0])
+    if len(waypoints_lista) == 0:
 
         return (
             "https://www.google.com/maps/dir/?api=1"
             f"&origin={origem}"
-            f"&destination={destino}"
+            f"&destination={destino_final}"
             "&travelmode=driving"
         )
 
-    # Mais de um destino
-    destino_final = urllib.parse.quote(destinos[-1])
-
     waypoints = "|".join(
         urllib.parse.quote(endereco)
-        for endereco in destinos[:-1]
+        for endereco in waypoints_lista
     )
 
     return (

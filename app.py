@@ -19,6 +19,7 @@ st.set_page_config(
 )
 
 st.title("🚚 Painel de Rotas")
+st.error("VERSÃO NOVA DO APP")
 
 hoje = datetime.now().strftime("%d/%m/%Y")
 
@@ -69,6 +70,55 @@ else:
 
     origem = st.text_input(
         "Digite o endereço de partida"
+    )
+
+st.divider()
+
+# =====================================
+# RETORNO
+# =====================================
+
+st.subheader("🏁 Ponto de Retorno")
+
+modo_retorno = st.radio(
+    "Escolha o destino final",
+    [
+        "Sem retorno",
+        "Utilizar endereço salvo",
+        "Digitar outro endereço"
+    ],
+    horizontal=True,
+    key="retorno"
+)
+
+retorno = ""
+
+if modo_retorno == "Utilizar endereço salvo":
+
+    if enderecos_df.empty:
+
+        st.warning("Nenhum endereço cadastrado.")
+
+    else:
+
+        nome_retorno = st.selectbox(
+            "Endereço de retorno",
+            enderecos_df["Nome"],
+            key="select_retorno"
+        )
+
+        retorno = enderecos_df.loc[
+            enderecos_df["Nome"] == nome_retorno,
+            "Endereço"
+        ].values[0]
+
+        st.success(f"🏁 {retorno}")
+
+elif modo_retorno == "Digitar outro endereço":
+
+    retorno = st.text_input(
+        "Digite o endereço de retorno",
+        key="input_retorno"
     )
 
 st.divider()
@@ -126,13 +176,29 @@ if st.button(
 
     st.divider()
 
-    st.subheader("📍 Origem")
+    st.subheader("Resumo da Rota")
 
-    st.success(origem)
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.success(f"📍 Partida\n\n{origem}")
+
+    with col2:
+        st.info(f"🛑 Paradas\n\n{len(destinos)}")
+
+    with col3:
+
+        if retorno:
+            st.success(f"🏁 Retorno\n\n{retorno}")
+        else:
+            st.warning("🏁 Sem retorno")
+
+    st.divider()
 
     link = gerar_link_google_maps(
-        origem,
-        destinos
+        origem=origem,
+        destinos=destinos,
+        retorno=retorno
     )
 
     st.link_button(
