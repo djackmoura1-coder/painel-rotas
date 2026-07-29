@@ -1,0 +1,15 @@
+# Credenciais
+credentials.json
+.streamlit/secrets.toml
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Ambiente virtual
+.venv/
+venv/
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
