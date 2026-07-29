@@ -19,11 +19,26 @@ scope = [
 
 
 def conectar_planilha():
+    """
+    Conecta na planilha.
 
-    credentials = Credentials.from_service_account_file(
-        "credentials.json",
-        scopes=scope
-    )
+    - Local: usa credentials.json
+    - Streamlit Cloud: usa st.secrets
+    """
+
+    try:
+        # Streamlit Cloud
+        credentials = Credentials.from_service_account_info(
+            st.secrets["gcp_service_account"],
+            scopes=scope
+        )
+
+    except Exception:
+        # Execução local
+        credentials = Credentials.from_service_account_file(
+            "credentials.json",
+            scopes=scope
+        )
 
     client = gspread.authorize(credentials)
 
