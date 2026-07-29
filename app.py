@@ -19,7 +19,6 @@ st.set_page_config(
 )
 
 st.title("🚚 Painel de Rotas")
-st.error("VERSÃO NOVA DO APP")
 
 hoje = datetime.now().strftime("%d/%m/%Y")
 
